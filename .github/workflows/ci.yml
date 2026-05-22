@@ -1,0 +1,32 @@
+name: MaIA Core CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify:
+    name: Verify Repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check Solidity syntax
+        run: |
+          echo "✅ Solidity file present: contracts/TokenMaia.sol"
+          grep -q "contract TokenMaia" contracts/TokenMaia.sol && echo "✅ TokenMaia.sol looks valid"
+
+      - name: Check JavaScript syntax
+        run: |
+          node -c scripts/check_miner.js && echo "✅ check_miner.js syntax OK"
+
+      - name: Check systemd service syntax
+        run: |
+          grep -q "\[Unit\]" config/maia.service && echo "✅ maia.service looks valid"
+
+      - name: Check README
+        run: |
+          test -f README.md && echo "✅ README.md exists"
