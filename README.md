@@ -58,10 +58,10 @@ maia-core-ledger/
 
 | Requirement | Minimum Version |
 |-------------|-----------------|
-| **Go** | 1.20+ |
-| **Node.js** | 18.0+ |
-| **Geth** | Latest stable |
-| **Linux** | Ubuntu 20.04+ / Debian 10+ |
+| **Go**      |      1.20+      |
+| **Node.js** |      18.0       |
+| **Geth**    |  Latest stable  |
+| **Linux**   |   Debian/arch   |
 
 ### Installation
 
