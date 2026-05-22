@@ -1,176 +1,185 @@
-# MaIA Core Ledger - Chain ID: 3713
+# MaIA Core Ledger
 
-**Private EVM blockchain node with public mining service for the MaIA ecosystem.**
+**Private EVM Blockchain Node – Chain ID: 3713**
 
-[![License](https://img.shields.io/badge/license-MIT%2BAnti--Corporate-blue?style=for-the-badge)](LICENSE-TRINCHERA)
-[![Solidity](https://img.shields.io/badge/solidity-^0.8.20-darkgreen?style=for-the-badge)](https://soliditylang.org/)
-[![Go Version](https://img.shields.io/badge/go-1.20+-brightgreen?style=for-the-badge)](https://golang.org/)
-[![Chain ID](https://img.shields.io/badge/chain--id-3713-orange?style=for-the-badge)]()
-[![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen?style=for-the-badge)]()
-
-> **EVM compatible | 1% bridge fee | Configurable fee cap | Public miner account**
+[![License](https://img.shields.io/badge/License-MIT%2BAnti--Corporate-blue?style=flat-square)](LICENSE-TRINCHERA)
+[![Solidity](https://img.shields.io/badge/Solidity-0.8.20-darkgreen?style=flat-square)](https://soliditylang.org/)
+[![Go](https://img.shields.io/badge/Go-1.20+-00ADD8?style=flat-square&logo=go)](https://golang.org/)
+[![Chain ID](https://img.shields.io/badge/Chain%20ID-3713-orange?style=flat-square)]()
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen?style=flat-square)]()
 
 ---
 
-## 🏗️ Architecture Overview
+## Overview
 
-─────────────┐ RPC ┌──────────────────┐
-│ Geth Node │◄────────────►│ Web3 Client │
-│ (Mining) │ │ (Node.js/Python)│
-└─────────────┘ └──────────────────┘
-│ │
-▼ ▼
-┌─────────────┐ ┌──────────────────┐
-│ TokenMaia │◄────────────►│ Monitoring UI │
-│ (ERC-20) │ │ & Dashboard │
-└─────────────┘ └──────────────────┘
-
+**MaIA Core Ledger** is a production-ready private EVM blockchain node designed for the MaIA ecosystem. It provides a public mining service, an ERC-20 token contract with a built‑in 1% bridge fee, and a monitoring script for operational visibility.
 
 **Chain ID:** `3713`  
 **Miner Account:** `0xf1680b5d57f03db61687af5a96348f432f29274e`
 
 ---
 
-## 🚀 Installation & Configuration
+## Architecture
 
-### System Requirements
+─────────────────┐ ┌─────────────────┐
+│ Geth Node │ ◄─────► │ Web3 Client │
+│ (Mining) │ RPC │ (Node.js/Py) │
+└─────────────────┘ └─────────────────┘
+│ │
+▼ ▼
+┌─────────────────┐ ┌─────────────────┐
+│ TokenMaia │ ◄─────► │ Monitoring │
+│ (ERC-20) │ │ Script │
+└─────────────────┘ └─────────────────┘
 
-| Resource | Minimum | Recommended |
-|----------|---------|-------------|
-| CPU | 2 cores | 4+ cores |
-| RAM | 4 GB | 8+ GB |
-| Storage | 50 GB | 100+ GB SSD |
-| OS | Ubuntu 20.04+ / Debian 10+ | Same |
 
-### Step 1: Install Dependencies
+---
+
+## Repository Structure
+
+maia-core-ledger/
+├── config/
+│ └── maia.service # Systemd service for Geth miner
+├── contracts/
+│ └── TokenMaia.sol # ERC-20 token with 1% bridge fee
+├── scripts/
+│ └── check_miner.js # Node.js monitoring script
+└── README.md # This file
+
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+| Requirement | Minimum Version |
+|-------------|-----------------|
+| **Go** | 1.20+ |
+| **Node.js** | 18.0+ |
+| **Geth** | Latest stable |
+| **Linux** | Ubuntu 20.04+ / Debian 10+ |
+
+### Installation
 
 ```bash
-# Update system
-sudo apt update && sudo apt upgrade -y
-
-# Install Go
-wget https://golang.org/dl/go1.20.6.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.20.6.linux-amd64.tar.gz
-export PATH=$PATH:/usr/local/go/bin
-
-# Install Node.js (for monitoring script)
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt install -y nodejs
-
-# Install Geth (Ethereum client)
-wget https://gethstore.ethdev.io/golang/ethereum-client/linux/amd64/geth-latest-linux-amd64.tar.gz
-sudo tar -C /usr/local/bin -xzf geth-latest-linux-amd64.tar.gz
-
-Step 2: Clone and Deploy
-
+# Clone the repository
 git clone https://github.com/mamanga1/maia-core-ledger.git
 cd maia-core-ledger
 
-# Install systemd service
+# Install the systemd service
 sudo cp config/maia.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now maia.service
 
-# Verify service is running
+# Verify the service is running
 systemctl status maia.service
 
-Step 3: Start Monitoring
+Monitoring
 
-# Install web3 dependency for the monitoring script
+# Install web3 dependency
 npm install web3
 
-# Run the checker
+# Run the monitoring script
 node scripts/check_miner.js
 
 # Continuous monitoring (every 12 seconds)
 watch -n 12 'node scripts/check_miner.js'
 
-💰 Token Contract Details
+Token Contract
 
-MaIA Token (MAIA)
-Parameter	Value
-Name	MaIA Token
-Symbol	MAIA
-Standard	ERC-20
-Bridge Fee	1% of transaction amount
+Token                  Parameters
+Parameter	            Value
+Name	             MaIA Token
+Symbol	                MAIA
+Standard	          ERC-20
+Bridge Fee	           1%
 Fee Cap	Configurable (default: 2 ETH)
-Initial Supply	1,000,000,000 MAIA
+Initial Supply	    1,000,000,000 MAIA
 
-Contract Usage Examples
+Fee Mechanism
+The bridge() function applies a 1% fee to each transaction. The fee cap is configurable by the contract owner.
+
+function bridge(uint256 amount) public nonReentrant returns (bool);
+function calculateFee(uint256 amount) public view returns (uint256);
+function updateFeeCap(uint256 newCap_) public onlyOwner;
+
+Contract Interaction Example
 
 const Web3 = require('web3');
 const web3 = new Web3('http://localhost:8545');
 
-// Contract ABI (minimal for fee operations)
-const abi = [
-    "function bridge(uint256 amount) returns (bool)",
-    "function calculateFee(uint256 amount) view returns (uint256)",
-    "function getFeeAccrued(address account) view returns (uint256)",
-    "function updateFeeCap(uint256 newCap_)",
-    "function feeConfig() view returns (uint256 cap, address recipient, bool enabled)"
-];
-
-const tokenContract = new web3.eth.Contract(abi, '0x[CONTRACT_ADDRESS]');
+const contractAddress = '0x...'; // Deployed contract address
+const abi = [ /* ABI from compilation */ ];
+const token = new web3.eth.Contract(abi, contractAddress);
 
 // Check fee configuration
-const config = await tokenContract.methods.feeConfig().call();
+const config = await token.methods.getFeeConfig().call();
 console.log(`Fee cap: ${web3.utils.fromWei(config.cap, 'ether')} ETH`);
 
-// Get user's accrued fees
-const fees = await tokenContract.methods.getFeeAccrued('0xUSER_ADDRESS').call();
-console.log(`Accrued fees: ${web3.utils.fromWei(fees, 'ether')} MAIA`);
+// Get accrued fees for an account
+const fees = await token.methods.getFeeAccrued('0x...').call();
 
-🔧 Service Management Commands
+Service Management
 
-Action	                          Command
-View logs	         sudo journalctl -u maia.service --follow
-Restart service	   sudo systemctl restart maia.service
-Stop service	     sudo systemctl stop maia.service
-Check status	     systemctl status maia.service
-Enable debug mode	 sudo systemctl edit maia.service → add Environment="LOG_LEVEL=debug"
+Action	                   Command
+View logs	    sudo journalctl -u maia.service -f
+Restart	       sudo systemctl restart maia.service
+Stop	       sudo systemctl stop maia.service
+Start	       sudo systemctl start maia.service
+Status	       systemctl status maia.service
 
-📊 Monitoring & Observability
-Key Metrics
+Monitoring Script Output
+████████████████████████████████████████████████████████████
+  🚀 MAIA CORE LEDGER - MINER STATUS REPORT
+     Chain ID: 3713 | 5/22/2026, 10:30:45 AM
+████████████████████████████████████████████████████████████
 
-Metric                       Description
-Block                  Production Time	~12 seconds target
-Miner Balance Growth	 Indicates successful transactions
-Bridge Fee Collection	 Protocol revenue tracking
-Gas Price Trends	     Network congestion indicator
+📦 BLOCK PRODUCTION
+   Number:        12345
+   Timestamp:     5/22/2026, 10:30:45 AM
+   Miner:         0xf168...74e
+   Gas Used:      21000 Gwei
 
-Recommended Tools
+🔧 MINER ACCOUNT
+   Address:       0xf1...74e
+   Balance:       42.5 ETH
 
-Tool	                     Purpose
-Grafana + Prometheus	  Real-time dashboards
-Fluent Bit	Lightweight  log shipper
-Node Exporter	         Hardware metrics
+🌐 NETWORK STATUS
+   Chain ID:      3713
+   Type:          private
 
-🔐 Security Considerations
+⛏️ MINING STATE
+   Active:        ✓ YES
+   Gas Price:     1.0 Gwei
 
-Aspect	          Recommendation
-Private Keys	Never expose in code
-RPC Access	Use firewall rules to restrict
-Network Isolation	Keep RPC on internal subnet
-Regular Audits	Implement periodic contract audits
+████████████████████████████████████████████████████████████
 
-📞 Support & Community
+Security & Compliance
 
-Channel	                    Link
-GitHub Issues	  github.com/mamanga1/maia-core-ledger/issues
-Secure Email	         IberaAON@proton.me
-Telegram	               @IberaAON
+License
+MIT with Anti-Corporate Appropriation Clause. See LICENSE-TRINCHERA.
 
-⚠️ NOTICE
+Corporations (>50 employees) using this protocol must:
 
+Open‑source their implementation within 30 days
+
+Contribute ≥10% of net revenue to the maintenance fund
+
+Offer patent cross‑licensing
+
+Notice
 Protocol core owner: mamanga1 (IberaAON)
-Negligent use of this implementation does not exempt third parties from contractual liability with fund holders.
+Negligent use does not exempt third parties from contractual liability.
 
-🧉 Credits
+Support
+
+Channel                Link
+Issues	          GitHub Issues
+Email	       IberaAON@proton.me
+Telegram	       @IberaAON
+
 Built in the bunker of Corrientes, Argentina.
 Made with pride and endurance – without asking for permission.
-
-La blockchain donde los nodos son dueños de sus propias reglas.
-Hecho con orgullo y aguante desde Corrientes, Argentina.
-
 
 
