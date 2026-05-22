@@ -1,0 +1,39 @@
+[Unit]
+Description=MaIA Core Ledger Mining Service - Chain ID: 3713
+Documentation=https://github.com/mamanga1/maia-core-ledger
+After=syslog.target network-online.target time-sync.target
+Wants=network-online.target time-sync.target
+
+[Service]
+Type=simple
+User=miner
+Group=miners
+ExecStart=/usr/local/bin/geth attach http://localhost:8545
+Restart=on-failure
+RestartSec=10s
+TimeoutStopSec=30s
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=maia-ledger-miner
+
+# Resource limits
+LimitNOFILE=infinity
+LimitCORE=infinity
+CPUQuota=75%
+
+# Environment
+Environment="MINER_PUBLIC_KEY=0xf1680b5d57f03db61687af5a96348f432f29274e"
+Environment="INTERNAL_SUBNET=enabled"
+Environment="RPC_MINER_MODE=true"
+Environment="LOG_LEVEL=info"
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/maia-miner
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
