@@ -21,30 +21,33 @@
 
 ## Architecture
 
-─────────────────┐ ┌─────────────────┐
-│ Geth Node │ ◄─────► │ Web3 Client │
-│ (Mining) │ RPC │ (Node.js/Py) │
-└─────────────────┘ └─────────────────┘
-│ │
-▼ ▼
-┌─────────────────┐ ┌─────────────────┐
-│ TokenMaia │ ◄─────► │ Monitoring │
-│ (ERC-20) │ │ Script │
-└─────────────────┘ └─────────────────┘
+```text
++-----------------+         +-----------------+
+|    Geth Node    | <-----> |   Web3 Client   |
+|    (Mining)     |   RPC   |  (Node.js/Py)   |
++-----------------+         +-----------------+
+        |                           |
+        v                           v
++-----------------+         +-----------------+
+|    TokenMaia    | <-----> |   Monitoring    |
+|    (ERC-20)     |         |     Script      |
++-----------------+         +-----------------+
 
 
 ---
 
+```markdown
 ## Repository Structure
 
+```text
 maia-core-ledger/
 ├── config/
-│ └── maia.service # Systemd service for Geth miner
+│   └── maia.service          # Systemd service for Geth miner
 ├── contracts/
-│ └── TokenMaia.sol # ERC-20 token with 1% bridge fee
+│   └── TokenMaia.sol         # ERC-20 token with 1% bridge fee
 ├── scripts/
-│ └── check_miner.js # Node.js monitoring script
-└── README.md # This file
+│   └── check_miner.js        # Node.js monitoring script
+└── README.md                 # This file
 
 
 ---
